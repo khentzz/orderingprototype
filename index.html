@@ -322,7 +322,10 @@ body{background:#1a1a1a;display:flex;justify-content:center;align-items:flex-sta
   <div class="menu-item" onclick="toast('Vouchers coming soon','ok')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg><span class="menu-item-label">Vouchers</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
   <div class="menu-item" onclick="toast('Addresses coming soon','ok')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="menu-item-label">Saved Addresses</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
   <div class="menu-item" onclick="toast('Settings coming soon','ok')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="menu-item-label">Settings</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
-  <div style="padding:16px"><button class="btn bs" onclick="signOut()">Sign Out</button></div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+    <button class="btn bp" id="install-btn" onclick="installApp()" style="display:none">&#128187; Install ShopGo App</button>
+    <button class="btn bs" onclick="signOut()">Sign Out</button>
+  </div>
 </div>
 
 
@@ -610,6 +613,19 @@ function goHome(){
   el('main-content').style.display='block';
   el('bot-nav').style.display='flex';
   switchPanel('home');
+}
+
+function installApp(){
+  if(window._installPrompt){
+    window._installPrompt.prompt();
+    window._installPrompt.userChoice.then(function(r){
+      if(r.outcome==='accepted')toast('Installing ShopGo...','ok');
+      window._installPrompt=null;
+      var btn=el('install-btn');if(btn)btn.style.display='none';
+    });
+  }else{
+    toast('Tap browser menu \u2192 Add to Home Screen','ok');
+  }
 }
 
 function signOut(){
@@ -992,6 +1008,19 @@ document.addEventListener('DOMContentLoaded',function(){
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('/sw.js');
   }
+  // PWA install prompt
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    window._installPrompt = e;
+    var btn = el('install-btn');
+    if(btn) btn.style.display = 'block';
+  });
+  window.addEventListener('appinstalled', function(){
+    window._installPrompt = null;
+    var btn = el('install-btn');
+    if(btn) btn.style.display = 'none';
+    toast('ShopGo installed successfully!', 'ok');
+  });
 });
 </script>
 </body></html>
