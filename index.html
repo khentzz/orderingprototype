@@ -991,6 +991,9 @@ document.addEventListener('DOMContentLoaded',function(){
   renderProds();
   badges();
   initSearch();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js');
+  }
 });
 </script>
 </body></html>
