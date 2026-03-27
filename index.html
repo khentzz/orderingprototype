@@ -623,8 +623,14 @@ function installApp(){
       window._installPrompt=null;
       var btn=el('install-btn');if(btn)btn.style.display='none';
     });
-  }else{
-    toast('Tap browser menu \u2192 Add to Home Screen','ok');
+  } else {
+    // Show instructions modal
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS){
+      toast('Safari: tap Share \u2192 Add to Home Screen','ok');
+    } else {
+      toast('Tap browser menu (\u22EE) \u2192 Install app / Add to Home Screen','ok');
+    }
   }
 }
 
@@ -1021,6 +1027,12 @@ document.addEventListener('DOMContentLoaded',function(){
     if(btn) btn.style.display = 'none';
     toast('ShopGo installed successfully!', 'ok');
   });
+  // Show install button after 2s if not already in standalone mode
+  setTimeout(function(){
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    var btn = el('install-btn');
+    if(btn && !isStandalone) btn.style.display = 'block';
+  }, 2000);
 });
 </script>
 </body></html>
