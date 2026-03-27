@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ShopGo"/>
+<meta name="theme-color" content="#FF6A00"/>
+<link rel="manifest" href="manifest.json"/>
 <title>ShopGo</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -189,7 +195,7 @@ body{background:#1a1a1a;display:flex;justify-content:center;align-items:flex-sta
     </button>
     <div class="divider">or</div>
     <label class="login-label">Email</label>
-    <input id="li-email" class="ifield" type="email" placeholder="you@example.com" value="guest@shopgo.app"/>
+    <input id="li-email" class="ifield" type="email" placeholder="you@example.com" value="guest@shopgo.app" required/>
     <label class="login-label">Password</label>
     <input id="li-pass" class="ifield" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" value="password"/>
     <span class="forgot">Forgot password?</span>
@@ -561,7 +567,7 @@ var PRODS = [
    vars:['Black','Red','Blue'],
    desc:'Speed jump rope with ball-bearing handles, adjustable cable length, and anti-slip grip.'},
   {id:15,title:'Scented Candle Set',price:399,oprice:499,cat:'Lifestyle',rating:4.7,sold:876,
-   img:'https://images.unsplash.com/photo-1572726729207-a78d6feb18d7?q=80&w=800&auto=format&fit=crop',
+   img:'https://images.unsplash.com/photo-1543332164-6e82f355badc?q=80&w=800&auto=format&fit=crop',
    vars:['Lavender','Vanilla','Ocean Breeze'],
    desc:'Set of 3 hand-poured soy wax candles with natural fragrance. 40-hour burn time each.'},
   {id:16,title:'Phone Tripod Stand',price:349,oprice:499,cat:'Gadgets',rating:4.5,sold:541,
