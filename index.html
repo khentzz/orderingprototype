@@ -20,7 +20,7 @@ body{height:100%;background:#1a1a1a;display:flex;justify-content:center;align-it
 #app{
   max-width:430px;
   width:100%;
-  height:100vh;
+  height:100%;
   background:#fff;
   display:flex;
   flex-direction:column;
@@ -34,33 +34,12 @@ body{height:100%;background:#1a1a1a;display:flex;justify-content:center;align-it
 #screen-login{position:absolute;inset:0;z-index:100;display:none;flex-direction:column;overflow-y:auto;background:#fff}
 #screen-login.active{display:flex}
 /* Top nav — fixed height, never shrinks */
-#top-nav{background:var(--p);display:flex;align-items:center;padding:0 12px;height:52px;min-height:52px;flex-shrink:0;gap:4px;z-index:60}
-.tnav-logo{color:#fff;font-weight:700;font-size:1.15rem;margin-right:8px;white-space:nowrap}
-.tnav-tabs{display:flex;flex:1;overflow-x:auto;gap:2px;scrollbar-width:none}
-.tnav-tabs::-webkit-scrollbar{display:none}
-.tnav-tab{color:rgba(255,255,255,.75);background:none;border:none;border-bottom:2px solid transparent;padding:6px 10px;font-size:.78rem;font-family:'Poppins',sans-serif;cursor:pointer;white-space:nowrap;font-weight:500}
-.tnav-tab.active{color:#fff;border-bottom:2px solid #fff}
-.tnav-cart{background:none;border:none;cursor:pointer;position:relative;padding:4px}
-#tnav-badge,#bot-badge{position:absolute;top:-2px;right:-4px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;pointer-events:none}
-/* Main content — takes all remaining space between navbars */
+#top-nav{background:var(--p);display:flex;align-items:center;padding:0 12px;height:52px;min-height:
+.bnav-item.active svg{stroke:var(--p)}
+.bnav-item.active span{color:var(--p);font-weight:600}
 #main-content{flex:1;overflow:hidden;position:relative;min-height:0}
 .tab-panel{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;background:var(--bg)}
 .tab-panel.active{display:flex}
-/* Bottom nav — fixed height, never shrinks, safe area for iPhone */
-#bot-nav{
-  background:#fff;
-  display:flex;
-  border-top:1px solid var(--bdr);
-  flex-shrink:0;
-  min-height:56px;
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  z-index:60;
-}
-.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px;cursor:pointer;border:none;background:none;position:relative;font-family:'Poppins',sans-serif;min-height:56px}
-.bnav-item svg{stroke:#aaa;transition:stroke .2s;flex-shrink:0}
-.bnav-item span{font-size:.58rem;color:#aaa;margin-top:2px;transition:color .2s;line-height:1}
-.bnav-item.active svg{stroke:var(--p)}
-.bnav-item.active span{color:var(--p);font-weight:600}
 .scard{background:#fff;padding:16px;margin-bottom:8px}
 .sctitle{font-size:.88rem;font-weight:600;margin-bottom:12px;color:var(--t)}
 .ifield{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:12px;margin-bottom:10px;font-family:'Poppins',sans-serif;font-size:.9rem;outline:none}
@@ -1075,16 +1054,6 @@ function submitSocialLogin(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  // Fix height for mobile browsers — sets --vh to actual visible height
-  function setVH(){
-    var vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', vh + 'px');
-    var app = el('app');
-    if(app) app.style.height = window.innerHeight + 'px';
-  }
-  setVH();
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', function(){ setTimeout(setVH, 200); });
   initSupabase();
   renderCats();
   renderProds();
