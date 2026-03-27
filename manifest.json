@@ -1,0 +1,19 @@
+{
+  "name": "ShopGo",
+  "short_name": "ShopGo",
+  "description": "Smart shopping, fast checkout, simple order tracking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FF6A00",
+  "theme_color": "#FF6A00",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
