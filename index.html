@@ -72,6 +72,7 @@ body{background:#1a1a1a;display:flex;justify-content:center;align-items:flex-sta
 .toast.show{opacity:1}
 .toast.ok{background:var(--ok)}
 .toast.err{background:var(--red)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .panel-head{display:flex;align-items:center;padding:14px 16px;background:#fff;border-bottom:1px solid var(--bdr);flex-shrink:0;gap:10px}
 .panel-head h2{font-size:1rem;font-weight:700;flex:1}
 .back-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center}
@@ -177,11 +178,11 @@ body{background:#1a1a1a;display:flex;justify-content:center;align-items:flex-sta
   <div style="flex:1;padding:28px 24px 24px">
     <div class="login-logo" style="font-size:1.3rem;margin-bottom:2px">Welcome back!</div>
     <div class="login-sub">Sign in to continue shopping</div>
-    <button class="social-btn" onclick="toast('Google sign-in coming soon','ok')">
+    <button class="social-btn" onclick="showSocialLogin('Google')" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--bdr);background:#fff;font-family:'Poppins',sans-serif;font-size:.9rem;cursor:pointer;margin-bottom:10px;font-weight:500">
       <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
     </button>
-    <button class="social-btn" onclick="toast('Facebook sign-in coming soon','ok')">
+    <button class="social-btn" onclick="showSocialLogin('Facebook')" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--bdr);background:#fff;font-family:'Poppins',sans-serif;font-size:.9rem;cursor:pointer;margin-bottom:10px;font-weight:500">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       Continue with Facebook
     </button>
@@ -481,6 +482,24 @@ body{background:#1a1a1a;display:flex;justify-content:center;align-items:flex-sta
 <!-- TOAST -->
 <div id="toast" class="toast"></div>
 
+<!-- SOCIAL LOGIN MODAL -->
+<div id="social-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center">
+  <div style="background:#fff;width:100%;max-width:430px;border-radius:20px 20px 0 0;padding:24px 20px 32px;animation:slideUp .25s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div id="modal-title" style="font-size:1rem;font-weight:700;color:#222"></div>
+        <div style="font-size:.8rem;color:#777;margin-top:2px">Enter your credentials to continue</div>
+      </div>
+      <button onclick="closeSocialModal()" style="background:none;border:none;cursor:pointer;font-size:1.4rem;color:#aaa;line-height:1">&times;</button>
+    </div>
+    <label style="font-size:.82rem;font-weight:600;color:#222;display:block;margin-bottom:6px">Email</label>
+    <input id="modal-email" class="ifield" type="email" placeholder="you@example.com" style="margin-bottom:14px">
+    <label style="font-size:.82rem;font-weight:600;color:#222;display:block;margin-bottom:6px">Password</label>
+    <input id="modal-pass" class="ifield" type="password" placeholder="Enter your password" style="margin-bottom:20px">
+    <button id="modal-btn" class="btn bp" onclick="submitSocialLogin()">Sign In</button>
+  </div>
+</div>
+
 
 <script>
 var PRODS = [
@@ -507,7 +526,47 @@ var PRODS = [
   {id:6,title:'Yoga Mat Pro',price:550,oprice:699,cat:'Sports',rating:4.8,sold:2100,
    img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?q=80&w=800&auto=format&fit=crop',
    vars:['Purple','Blue','Black'],
-   desc:'Professional-grade yoga mat with extra thickness for joint support, non-slip surface, and carrying strap included.'}
+   desc:'Professional-grade yoga mat with extra thickness for joint support, non-slip surface, and carrying strap included.'},
+  {id:7,title:'Running Shoes',price:1899,oprice:2299,cat:'Sports',rating:4.7,sold:643,
+   img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop',
+   vars:['White/Red','Black/White','Blue/Gray'],
+   desc:'Lightweight running shoes with responsive cushioning, breathable mesh upper, and durable rubber outsole.'},
+  {id:8,title:'Mechanical Keyboard',price:1299,oprice:1599,cat:'Gadgets',rating:4.6,sold:318,
+   img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=800&auto=format&fit=crop',
+   vars:['Black','White','Gray'],
+   desc:'Compact TKL mechanical keyboard with tactile switches, RGB backlight, and USB-C connection.'},
+  {id:9,title:'Insulated Tumbler',price:449,oprice:599,cat:'Lifestyle',rating:4.7,sold:1560,
+   img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=800&auto=format&fit=crop',
+   vars:['Black','White','Sage Green','Blush Pink'],
+   desc:'Double-wall vacuum insulated tumbler keeps drinks cold 24hrs or hot 12hrs. Leak-proof lid included.'},
+  {id:10,title:'Resistance Bands Set',price:299,oprice:399,cat:'Sports',rating:4.5,sold:2890,
+   img:'https://images.unsplash.com/photo-1598289431512-b97b0917affc?q=80&w=800&auto=format&fit=crop',
+   vars:['5-piece Set','3-piece Set'],
+   desc:'Set of 5 resistance bands with varying tension levels. Perfect for home workouts, stretching, and rehab.'},
+  {id:11,title:'Portable Bluetooth Speaker',price:799,oprice:999,cat:'Gadgets',rating:4.6,sold:724,
+   img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?q=80&w=800&auto=format&fit=crop',
+   vars:['Black','Blue','Red'],
+   desc:'360-degree surround sound, IPX7 waterproof, 12-hour playtime. Perfect for outdoor adventures.'},
+  {id:12,title:'Minimalist Wallet',price:349,oprice:449,cat:'Lifestyle',rating:4.5,sold:987,
+   img:'https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=800&auto=format&fit=crop',
+   vars:['Brown','Black','Tan'],
+   desc:'Slim genuine leather wallet with RFID blocking, 6 card slots, and a cash compartment.'},
+  {id:13,title:'Laptop Stand',price:599,oprice:799,cat:'Gadgets',rating:4.8,sold:1102,
+   img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?q=80&w=800&auto=format&fit=crop',
+   vars:['Silver','Black'],
+   desc:'Adjustable aluminum laptop stand with 6 height levels, foldable design, and non-slip pads.'},
+  {id:14,title:'Jump Rope Pro',price:249,oprice:349,cat:'Sports',rating:4.6,sold:3200,
+   img:'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=800&auto=format&fit=crop',
+   vars:['Black','Red','Blue'],
+   desc:'Speed jump rope with ball-bearing handles, adjustable cable length, and anti-slip grip.'},
+  {id:15,title:'Scented Candle Set',price:399,oprice:499,cat:'Lifestyle',rating:4.7,sold:876,
+   img:'https://images.unsplash.com/photo-1602607144535-11be3fe59c5e?q=80&w=800&auto=format&fit=crop',
+   vars:['Lavender','Vanilla','Ocean Breeze'],
+   desc:'Set of 3 hand-poured soy wax candles with natural fragrance. 40-hour burn time each.'},
+  {id:16,title:'Phone Tripod Stand',price:349,oprice:499,cat:'Gadgets',rating:4.5,sold:541,
+   img:'https://images.unsplash.com/photo-1617347454431-f49d7ff5c3b1?q=80&w=800&auto=format&fit=crop',
+   vars:['Black','White'],
+   desc:'Flexible mini tripod with universal phone mount, Bluetooth remote shutter, and 360° rotation.'}
 ];
 var TRACK_STEPS = ['Order Placed','Payment Confirmed','Preparing Order','Packed','Out for Delivery','Delivered'];
 var S = {prods:PRODS,filtered:PRODS.slice(),cat:'All',cart:[],cur:null,variation:'',qty:1,order:null,ship:120,disc:0};
@@ -871,6 +930,31 @@ function initSupabase(){
       supabaseClient=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseKey);
     }
   }catch(e){console.warn('Supabase init skipped:',e);}
+}
+
+var _socialProvider='';
+function showSocialLogin(provider){
+  _socialProvider=provider;
+  el('modal-title').textContent='Continue with '+provider;
+  el('modal-btn').textContent='Sign in with '+provider;
+  el('modal-email').value='';
+  el('modal-pass').value='';
+  el('social-modal').style.display='flex';
+}
+function closeSocialModal(){
+  el('social-modal').style.display='none';
+}
+function submitSocialLogin(){
+  var email=el('modal-email').value.trim();
+  var pass=el('modal-pass').value.trim();
+  if(!email){el('modal-email').focus();toast('Please enter your email','err');return;}
+  if(!pass){el('modal-pass').focus();toast('Please enter your password','err');return;}
+  el('modal-btn').textContent='Signing in...';
+  setTimeout(function(){
+    closeSocialModal();
+    goHome();
+    toast('Welcome! Signed in with '+_socialProvider,'ok');
+  },900);
 }
 
 document.addEventListener('DOMContentLoaded',function(){
