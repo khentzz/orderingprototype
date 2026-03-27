@@ -1,35 +1,417 @@
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Files
-Go to file
-t
-.env.example
-.gitignore
-App.tsx
-README.md
-app.js
-config.js
-index.html
-netlify.toml
-orderingprototype.sln
-styles.css
-orderingprototype
-/index.html
-khentzz
-khentzz
-Add files via upload
-6125cdf
- · 
-10 minutes ago
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ShopGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<style>
+:root{--p:#FF6A00;--pd:#e05a00;--s:#FFA940;--bg:#F5F5F5;--card:#fff;--t:#222;--t2:#777;--badge:#FF3B30;--border:#EAEAEA;--ok:#22C55E;--r:14px;--sh:0 2px 12px rgba(0,0,0,.07)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#2a2a2a;display:flex;justify-content:center;align-items:center;min-height:100vh;-webkit-tap-highlight-color:transparent}
+#app{width:100%;max-width:430px;height:100vh;max-height:900px;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+@media(min-height:920px) and (min-width:450px){#app{border-radius:32px;height:900px}}
+@media(max-width:430px){#app{max-height:100vh;border-radius:0}}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;animation:fs .25s ease forwards}
+.screen.active{display:flex}
+@keyframes fs{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.hdr{background:var(--card);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 1px 0 var(--border);min-height:56px}
+.hdr-brand{font-size:1.15rem;font-weight:700;color:var(--p)}
+.hdr-title{font-size:1rem;font-weight:600;color:var(--t);flex:1;text-align:center}
+.ibtn{width:40px;height:40px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:50%;position:relative;transition:background .15s}
+.ibtn:active{background:var(--bg)}
+.cbadge{position:absolute;top:2px;right:2px;background:var(--badge);color:#fff;font-size:.65rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--card)}
+.btn{width:100%;padding:14px 20px;border-radius:var(--r);border:none;font-family:'Poppins',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s,transform .1s}
+.btn:active{opacity:.85;transform:scale(.98)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-p{background:var(--p);color:#fff}
+.btn-p:hover{background:var(--pd)}
+.btn-o{background:transparent;color:var(--p);border:1.5px solid var(--p)}
+.btn-s{background:var(--card);color:var(--t);border:1px solid var(--border);box-shadow:var(--sh)}
+.btn-g{background:none;border:none;color:var(--t2);font-size:.9rem;cursor:pointer;text-decoration:underline;padding:8px;font-family:'Poppins',sans-serif}
+.bbar{position:sticky;bottom:0;background:var(--card);padding:12px 16px;display:flex;gap:10px;box-shadow:0 -4px 16px rgba(0,0,0,.06);z-index:20;margin-top:auto}
+/* Login */
+.l-hero{background:linear-gradient(160deg,var(--p) 0%,var(--s) 100%);padding:60px 24px 48px;display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff}
+.l-logo{font-size:2.2rem;font-weight:700;letter-spacing:-1px;margin-bottom:8px}
+.l-tag{font-size:.9rem;opacity:.9;line-height:1.5}
+.l-body{padding:32px 24px;flex:1;background:var(--card)}
+.l-welcome{font-size:.95rem;color:var(--t2);margin-bottom:20px;text-align:center}
+.l-btns{display:flex;flex-direction:column;gap:12px}
+/* Search */
+.sw{background:var(--card);padding:10px 16px 14px}
+.sbar{background:var(--bg);border:1.5px solid var(--border);border-radius:24px;padding:10px 16px;display:flex;align-items:center;gap:8px;transition:border-color .2s}
+.sbar:focus-within{border-color:var(--p);background:#fff}
+.sinput{border:none;background:transparent;outline:none;flex:1;font-family:'Poppins',sans-serif;font-size:.9rem;color:var(--t)}
+.sinput::placeholder{color:var(--t2)}
+/* Banner */
+.banner{margin:12px 16px;background:linear-gradient(135deg,var(--p) 0%,var(--s) 100%);border-radius:18px;padding:20px;display:flex;align-items:center;justify-content:space-between;color:#fff;overflow:hidden}
+.b-sub{font-size:.75rem;opacity:.85;text-transform:uppercase;letter-spacing:.05em}
+.b-title{font-size:1.2rem;font-weight:700;line-height:1.3;margin-top:4px}
+.b-btn{margin-top:12px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.5);color:#fff;padding:7px 16px;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif}
+.b-emoji{font-size:3.5rem;margin-left:12px}
+/* Section */
+.sh{padding:12px 16px 4px}
+.st{font-size:.95rem;font-weight:600;color:var(--t)}
+/* Cat tabs */
+.ctw{padding:4px 16px 12px;overflow-x:auto;scrollbar-width:none}
+.ctw::-webkit-scrollbar{display:none}
+.cts{display:flex;gap:8px;width:max-content}
+.ct{padding:7px 18px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:500;color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s}
+.ct.active{background:var(--p);color:#fff;border-color:var(--p)}
+/* Products */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px}
+.pcard{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);cursor:pointer;transition:transform .15s;display:flex;flex-direction:column}
+.pcard:active{transform:scale(.97)}
+.pimg{width:100%;aspect-ratio:1;overflow:hidden;background:var(--bg)}
+.pimg img{width:100%;height:100%;object-fit:cover;display:block}
+.pbody{padding:10px 10px 12px;display:flex;flex-direction:column;flex:1}
+.ptitle{font-size:.85rem;font-weight:500;color:var(--t);line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.pstats{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--t2);margin-bottom:8px}
+.pstar{color:#F59E0B;font-weight:600}
+.ppr{display:flex;align-items:baseline;gap:6px}
+.pp{font-size:1rem;font-weight:700;color:var(--p)}
+.pop{font-size:.75rem;color:var(--t2);text-decoration:line-through}
+/* Loader */
+.lw{display:flex;justify-content:center;padding:32px}
+.loader{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Detail */
+.dscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dhero{width:100%;height:280px;background:var(--bg);overflow:hidden}
+.dhero img{width:100%;height:100%;object-fit:cover;display:block}
+.dcard{background:var(--card);padding:16px;margin-bottom:8px}
+.dpr{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.dprice{font-size:1.6rem;font-weight:700;color:var(--p)}
+.doprice{font-size:.9rem;color:var(--t2);text-decoration:line-through}
+.dtitle{font-size:1.1rem;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:8px}
+.dmeta{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--t2)}
+.drating{color:#F59E0B;font-weight:600}
+.dst{font-size:.9rem;font-weight:600;color:var(--t);margin-bottom:10px;margin-top:16px}
+.dst:first-child{margin-top:0}
+.ddesc{font-size:.88rem;color:var(--t2);line-height:1.7}
+.selrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.vchip{padding:7px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:.82rem;cursor:pointer;background:var(--card);color:var(--t);transition:all .15s;font-family:'Poppins',sans-serif}
+.vchip.active{background:rgba(255,106,0,.08);color:var(--p);border-color:var(--p);font-weight:600}
+.qctl{display:flex;align-items:center;gap:16px;background:var(--bg);border-radius:24px;padding:6px 14px;border:1.5px solid var(--border)}
+.qbtn{background:var(--card);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t);box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .1s}
+.qbtn:active{transform:scale(.9)}
+.qval{font-weight:600;font-size:1rem;min-width:24px;text-align:center}
+/* Cart */
+.clist{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px}
+.citem{background:var(--card);border-radius:var(--r);padding:12px;display:flex;gap:12px;box-shadow:var(--sh)}
+.cimg{width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg);flex-shrink:0}
+.cimg img{width:100%;height:100%;object-fit:cover;display:block}
+.cinfo{flex:1;display:flex;flex-direction:column;min-width:0}
+.ctname{font-size:.88rem;font-weight:500;color:var(--t);line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cvar{font-size:.75rem;color:var(--t2);background:var(--bg);padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:6px}
+.cprice{font-size:1rem;font-weight:700;color:var(--p);margin-bottom:8px}
+.cctrl{display:flex;align-items:center;justify-content:space-between}
+.cctrl .qctl{padding:3px 10px;gap:10px}
+.cctrl .qbtn{width:26px;height:26px;font-size:1rem}
+.cctrl .qval{font-size:.88rem;min-width:18px}
+.crmbtn{background:none;border:none;color:var(--badge);font-size:.78rem;cursor:pointer;font-family:'Poppins',sans-serif;padding:4px 8px;border-radius:8px}
+.crmbtn:active{background:#fff0f0}
+.srow{display:flex;justify-content:space-between;align-items:center;font-size:.9rem;color:var(--t2)}
+.stotal{font-size:1.2rem;font-weight:700;color:var(--t)}
+.empty{text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.eicon{font-size:3rem}
+.etitle{font-size:1rem;font-weight:600;color:var(--t)}
+.empty p{font-size:.85rem;color:var(--t2)}
+/* Checkout */
+.coscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scard{background:var(--card);padding:16px;margin-bottom:8px}
+.sctitle{font-size:.9rem;font-weight:600;color:var(--t);margin-bottom:12px}
+.ifield{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'Poppins',sans-serif;font-size:.88rem;color:var(--t);background:var(--bg);outline:none;margin-bottom:10px;transition:border-color .2s,background .2s}
+.ifield:last-child{margin-bottom:0}
+.ifield:focus{border-color:var(--p);background:#fff;box-shadow:0 0 0 3px rgba(255,106,0,.1)}
+.chkitem{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.chkitem:last-child{border-bottom:none}
+.chkimg{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--bg)}
+.chkinfo{flex:1;min-width:0}
+.chkname{font-size:.85rem;font-weight:500;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chkmeta{font-size:.75rem;color:var(--t2);margin-top:2px}
+.chkprice{font-size:.88rem;font-weight:600;color:var(--t);white-space:nowrap}
+.popt{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;cursor:pointer;transition:all .15s}
+.popt:last-child{margin-bottom:0}
+.popt.active{border-color:var(--p);background:rgba(255,106,0,.04)}
+.popt input{display:none}
+.pradio{width:20px;height:20px;border:2px solid #ccc;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .15s}
+.popt.active .pradio{border-color:var(--p)}
+.popt.active .pradio::after{content:'';width:10px;height:10px;background:var(--p);border-radius:50%}
+.plabel{font-size:.9rem;font-weight:500;color:var(--t);flex:1}
+.drow{color:var(--ok)!important}
+.trow{border-top:1px dashed var(--border);padding-top:12px;margin-top:4px;font-size:1rem;font-weight:700;color:var(--t)}
+.trow span:last-child{color:var(--p)}
+.scard .srow{margin-bottom:10px}
+.scard .srow:last-child{margin-bottom:0}
+/* Confirmation */
+.cfbody{flex:1;overflow-y:auto;padding:0 0 24px}
+.cficon{font-size:4rem;text-align:center;margin:36px 0 12px;background:#e8f5e9;width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:36px auto 12px;color:#22c55e;font-size:2rem;font-weight:700;box-shadow:0 8px 20px rgba(34,197,94,.2)}
+.cfhead{text-align:center;font-size:1.4rem;font-weight:700;color:var(--t)}
+.cfsub{text-align:center;font-size:.85rem;color:var(--t2);margin-top:6px;padding:0 24px;line-height:1.5}
+.cfcard{margin:24px 16px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
+.cfrow{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border)}
+.cflabel{font-size:.85rem;color:var(--t2)}
+.cfval{font-size:.88rem;font-weight:600;color:var(--t);text-align:right;max-width:60%}
+.cftotal{color:var(--p)!important;font-size:1rem!important}
+.cfacts{padding:0 16px;display:flex;flex-direction:column;gap:10px;margin-top:8px}
+/* Tracking */
+.trscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.troh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.trlabel{font-size:.75rem;color:var(--t2);margin-bottom:3px}
+.tronum{font-size:1rem;font-weight:700;color:var(--t)}
+.trval{font-size:.85rem;font-weight:500;color:var(--t)}
+.trmg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sbadge{padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
+.sa{background:rgba(255,106,0,.12);color:var(--p)}
+.sd{background:rgba(34,197,94,.12);color:var(--ok)}
+.trtl{display:flex;flex-direction:column}
+.trstep{display:flex;gap:12px}
+.sdw{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.sdot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--t2);flex-shrink:0;transition:all .2s}
+.trstep.done .sdot{background:var(--p);border-color:var(--p);color:#fff;font-weight:700}
+.trstep.cur .sdot{border-color:var(--p);border-width:3px;color:var(--p);font-size:.9rem}
+.sline{flex:1;width:2px;background:var(--border);min-height:24px;margin:2px 0}
+.trstep.done .sline{background:var(--p)}
+.sbody{flex:1;padding-bottom:20px}
+.slabel{font-size:.88rem;font-weight:600;color:var(--t2)}
+.trstep.done .slabel,.trstep.cur .slabel{color:var(--t)}
+.snote{font-size:.78rem;color:var(--t2);margin-top:2px;line-height:1.4}
+.stime{font-size:.72rem;color:var(--t2);margin-top:3px}
+.tritem{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.tritem:last-child{border-bottom:none}
+.triimg{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--bg)}
+.triinfo{flex:1;min-width:0}
+.triname{font-size:.85rem;font-weight:500;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trimeta{font-size:.75rem;color:var(--t2);margin-top:2px}
+.triprice{font-size:.88rem;font-weight:600;color:var(--t);white-space:nowrap}
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:10px 20px;border-radius:24px;font-size:.85rem;font-family:'Poppins',sans-serif;font-weight:500;white-space:nowrap;opacity:0;transition:opacity .25s,transform .25s;z-index:9999;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--badge)}
+</style>
+</head>
+<body>
+<div id="app">
 
-Code
 
-Blame
-0 lines (0 loc) · 0 Bytes
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="l-hero">
+    <div class="l-logo">ShopGo</div>
+    <p class="l-tag">Smart shopping, fast checkout,<br>simple order tracking.</p>
+  </div>
+  <div class="l-body">
+    <p class="l-welcome">Welcome! Sign in to continue</p>
+    <div class="l-btns">
+      <button class="btn btn-s" onclick="app.go('screen-home')">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.25,22C17.6,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1Z" fill="#DB4437"/></svg>
+        Continue with Google
+      </button>
+      <button class="btn btn-s" onclick="app.go('screen-home')">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12,2C6.477,2 2,6.477 2,12C2,16.991 5.657,21.128 10.438,21.881V14.89H7.898V12H10.438V9.797C10.438,7.274 11.984,5.922 14.214,5.922C15.221,5.922 16.275,6.101 16.275,6.101V8.363H15.114C13.97,8.363 13.614,9.073 13.614,9.8V12H16.162L15.755,14.89H13.614V21.881C18.343,21.128 22,16.991 22,12C22,6.477 17.523,2 12,2Z" fill="#4267B2"/></svg>
+        Continue with Facebook
+      </button>
+      <button class="btn btn-o" onclick="app.go('screen-home')">Continue with Email</button>
+      <button class="btn-g" onclick="app.go('screen-home')">Continue as Guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen">
+  <div class="hdr">
+    <div class="hdr-brand">ShopGo</div>
+    <button class="ibtn" onclick="app.go('screen-cart')" aria-label="Cart">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cbadge" id="badge-home" style="display:none">0</span>
+    </button>
+  </div>
+  <div class="sw">
+    <div class="sbar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" class="sinput" placeholder="Search products...">
+    </div>
+  </div>
+  <div class="banner">
+    <div>
+      <p class="b-sub">Limited time offer</p>
+      <h2 class="b-title">Up to 30% off<br>on top picks</h2>
+      <button class="b-btn">Shop Now</button>
+    </div>
+    <div class="b-emoji">🎁</div>
+  </div>
+  <div class="sh"><span class="st">Categories</span></div>
+  <div class="ctw"><div id="cat-tabs" class="cts"></div></div>
+  <div class="sh"><span class="st">Products</span></div>
+  <div id="product-loader" class="lw" style="display:none"><div class="loader"></div></div>
+  <div class="pgrid" id="product-list"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- DETAILS -->
+<div id="screen-details" class="screen">
+  <div class="hdr">
+    <button class="ibtn" onclick="app.go('screen-home')" aria-label="Back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="hdr-title">Product Details</span>
+    <button class="ibtn" onclick="app.go('screen-cart')" aria-label="Cart">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cbadge" id="badge-detail" style="display:none">0</span>
+    </button>
+  </div>
+  <div class="dscroll">
+    <div class="dhero"><img id="d-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    <div class="dcard">
+      <div class="dpr"><span class="dprice" id="d-price"></span><span class="doprice" id="d-oprice"></span></div>
+      <h2 class="dtitle" id="d-title"></h2>
+      <div class="dmeta"><span class="drating">&#9733; <span id="d-rating"></span></span><span style="color:var(--border)">&#183;</span><span id="d-sold"></span> sold</div>
+    </div>
+    <div class="dcard">
+      <div class="dst">Color / Variation</div>
+      <div class="selrow" id="d-vars"></div>
+      <div class="dst">Quantity</div>
+      <div class="selrow">
+        <div class="qctl">
+          <button class="qbtn" onclick="app.dqty(-1)">&#8722;</button>
+          <span class="qval" id="d-qty">1</span>
+          <button class="qbtn" onclick="app.dqty(1)">+</button>
+        </div>
+      </div>
+      <div class="dst">Description</div>
+      <p class="ddesc" id="d-desc"></p>
+    </div>
+    <div style="height:100px"></div>
+  </div>
+  <div class="bbar">
+    <button class="btn btn-o" style="flex:1" onclick="app.atc()">Add to Cart</button>
+    <button class="btn btn-p" style="flex:1" onclick="app.buy()">Buy Now</button>
+  </div>
+</div>
+
+<!-- CART -->
+<div id="screen-cart" class="screen">
+  <div class="hdr">
+    <button class="ibtn" onclick="app.go('screen-home')" aria-label="Back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="hdr-title">My Cart</span>
+    <div style="width:40px"></div>
+  </div>
+  <div class="clist" id="cart-list"></div>
+  <div class="bbar" style="flex-direction:column;gap:8px">
+    <div class="srow"><span>Subtotal</span><span id="cart-sub" class="stotal">&#8369;0.00</span></div>
+    <button class="btn btn-p" onclick="app.go('screen-checkout')">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- CHECKOUT -->
+<div id="screen-checkout" class="screen">
+  <div class="hdr">
+    <button class="ibtn" onclick="app.go('screen-cart')" aria-label="Back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="hdr-title">Checkout</span>
+    <div style="width:40px"></div>
+  </div>
+  <div class="coscroll">
+    <div class="scard">
+      <div class="sctitle">Shipping Information</div>
+      <input type="text" class="ifield" id="co-name" placeholder="Full name">
+      <input type="text" class="ifield" id="co-addr" placeholder="Complete shipping address *" value="123 Commerce St, Bacolod City">
+      <input type="tel" class="ifield" id="co-phone" placeholder="Contact number (optional)">
+    </div>
+    <div class="scard">
+      <div class="sctitle">Order Items</div>
+      <div id="co-items"></div>
+    </div>
+    <div class="scard">
+      <div class="sctitle">Payment Method</div>
+      <label class="popt active" onclick="app.pay(this)"><div class="pradio"></div><span class="plabel">GCash</span><input type="radio" name="pay" value="GCash" checked></label>
+      <label class="popt" onclick="app.pay(this)"><div class="pradio"></div><span class="plabel">Maya</span><input type="radio" name="pay" value="Maya"></label>
+      <label class="popt" onclick="app.pay(this)"><div class="pradio"></div><span class="plabel">Credit / Debit Card</span><input type="radio" name="pay" value="Credit/Debit Card"></label>
+      <label class="popt" onclick="app.pay(this)"><div class="pradio"></div><span class="plabel">Cash on Delivery</span><input type="radio" name="pay" value="Cash on Delivery"></label>
+    </div>
+    <div class="scard">
+      <div class="sctitle">Order Summary</div>
+      <div class="srow"><span>Item Subtotal</span><span id="co-sub">&#8369;0.00</span></div>
+      <div class="srow"><span>Shipping Fee</span><span id="co-ship">&#8369;0.00</span></div>
+      <div class="srow drow"><span>Discount</span><span id="co-disc">&#8369;0.00</span></div>
+      <div class="srow trow"><span>Total Payment</span><span id="co-total">&#8369;0.00</span></div>
+    </div>
+    <div style="height:100px"></div>
+  </div>
+  <div class="bbar">
+    <button class="btn btn-p" id="order-btn" onclick="app.order()">Place Order</button>
+  </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div id="screen-confirmation" class="screen" style="background:#fff">
+  <div class="hdr">
+    <div style="width:40px"></div>
+    <span class="hdr-title">Order Confirmed</span>
+    <div style="width:40px"></div>
+  </div>
+  <div class="cfbody">
+    <div class="cficon">&#10003;</div>
+    <h2 class="cfhead">Order Placed!</h2>
+    <p class="cfsub">Thank you for your purchase. Your order is being processed.</p>
+    <div class="cfcard">
+      <div class="cfrow"><span class="cflabel">Order Number</span><span class="cfval" id="cf-id">-</span></div>
+      <div class="cfrow"><span class="cflabel">Order Date</span><span class="cfval" id="cf-date">-</span></div>
+      <div class="cfrow"><span class="cflabel">Payment Method</span><span class="cfval" id="cf-pay">-</span></div>
+      <div class="cfrow"><span class="cflabel">Total Amount</span><span class="cfval cftotal" id="cf-total">&#8369;0.00</span></div>
+      <div class="cfrow" style="border-bottom:none"><span class="cflabel">Est. Delivery</span><span class="cfval">2-4 business days</span></div>
+    </div>
+    <div class="cfacts">
+      <button class="btn btn-p" onclick="app.go('screen-tracking')">Track My Order</button>
+      <button class="btn btn-o" onclick="app.go('screen-home')">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRACKING -->
+<div id="screen-tracking" class="screen">
+  <div class="hdr">
+    <button class="ibtn" onclick="app.go('screen-confirmation')" aria-label="Back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <span class="hdr-title">Track Order</span>
+    <div style="width:40px"></div>
+  </div>
+  <div class="trscroll">
+    <div class="scard">
+      <div class="troh">
+        <div><div class="trlabel">Order Number</div><div class="tronum" id="tr-num">-</div></div>
+        <span class="sbadge sa" id="tr-badge">Order Placed</span>
+      </div>
+      <div class="trmg">
+        <div><div class="trlabel">Date Placed</div><div class="trval" id="tr-date">-</div></div>
+        <div><div class="trlabel">Payment</div><div class="trval" id="tr-pay">-</div></div>
+        <div><div class="trlabel">Total</div><div class="trval" id="tr-total">-</div></div>
+        <div><div class="trlabel">Address</div><div class="trval" id="tr-addr">-</div></div>
+      </div>
+    </div>
+    <div class="scard">
+      <div class="sctitle">Delivery Progress</div>
+      <div id="tr-timeline" class="trtl"></div>
+    </div>
+    <div class="scard">
+      <div class="sctitle">Items Ordered</div>
+      <div id="tr-items"></div>
+    </div>
+    <div style="padding:0 16px 24px">
+      <button class="btn btn-o" onclick="app.go('screen-home')">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+<script src="app.js"></script>
+</body>
+</html>
