@@ -15,26 +15,25 @@
 <style>
 :root{--p:#FF6A00;--pd:#e05a00;--s:#FFA940;--bg:#F5F5F5;--card:#fff;--t:#222;--t2:#777;--red:#FF3B30;--bdr:#EAEAEA;--ok:#22C55E}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%}
-body{height:100%;background:#1a1a1a;display:flex;justify-content:center;align-items:stretch;font-family:'Poppins',sans-serif}
-#app{
-  max-width:430px;
-  width:100%;
-  height:100%;
-  background:#fff;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  position:relative;
-}
-@media(min-width:450px){#app{box-shadow:0 0 60px rgba(0,0,0,.6)}}
-/* Login overlays everything */
+body{background:#1a1a1a;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;font-family:'Poppins',sans-serif}
+#app{max-width:430px;width:100%;min-height:100vh;background:#fff;display:flex;flex-direction:column;position:relative;overflow:hidden}
+@media(max-width:430px){#app{height:100vh;height:100dvh;overflow:hidden}}
 .screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto}
 .screen.active{display:flex}
 #screen-login{position:absolute;inset:0;z-index:100;display:none;flex-direction:column;overflow-y:auto;background:#fff}
 #screen-login.active{display:flex}
-/* Top nav — fixed height, never shrinks */
-#top-nav{background:var(--p);display:flex;align-items:center;padding:0 12px;height:52px;min-height:
+#top-nav{background:var(--p);display:flex;align-items:center;padding:0 12px;height:52px;flex-shrink:0;gap:4px}
+.tnav-logo{color:#fff;font-weight:700;font-size:1.15rem;margin-right:8px;white-space:nowrap}
+.tnav-tabs{display:flex;flex:1;overflow-x:auto;gap:2px;scrollbar-width:none}
+.tnav-tabs::-webkit-scrollbar{display:none}
+.tnav-tab{color:rgba(255,255,255,.75);background:none;border:none;border-bottom:2px solid transparent;padding:6px 10px;font-size:.78rem;font-family:'Poppins',sans-serif;cursor:pointer;white-space:nowrap;font-weight:500}
+.tnav-tab.active{color:#fff;border-bottom:2px solid #fff}
+.tnav-cart{background:none;border:none;cursor:pointer;position:relative;padding:4px}
+#tnav-badge,#bot-badge{position:absolute;top:-2px;right:-4px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#bot-nav{background:#fff;display:flex;border-top:1px solid var(--bdr);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);position:relative;z-index:60}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 6px;cursor:pointer;border:none;background:none;position:relative;font-family:'Poppins',sans-serif}
+.bnav-item svg{stroke:#aaa;transition:stroke .2s}
+.bnav-item span{font-size:.6rem;color:#aaa;margin-top:2px;transition:color .2s}
 .bnav-item.active svg{stroke:var(--p)}
 .bnav-item.active span{color:var(--p);font-weight:600}
 #main-content{flex:1;overflow:hidden;position:relative;min-height:0}
@@ -45,7 +44,7 @@ body{height:100%;background:#1a1a1a;display:flex;justify-content:center;align-it
 .ifield{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:12px;margin-bottom:10px;font-family:'Poppins',sans-serif;font-size:.9rem;outline:none}
 .ifield:focus{border-color:var(--p)}
 .srow{display:flex;justify-content:space-between;font-size:.9rem;color:var(--t2);margin-bottom:6px}
-.bbar{background:#fff;padding:12px 16px;display:flex;gap:10px;border-top:1px solid var(--bdr);flex-shrink:0;margin-top:auto}
+.bbar{position:sticky;bottom:0;background:#fff;padding:12px 16px;display:flex;gap:10px;border-top:1px solid var(--bdr)}
 .btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:'Poppins',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem}
 .bp{background:var(--p);color:#fff}
 .bo{background:#fff;color:var(--p);border:1.5px solid var(--p)}
@@ -871,61 +870,14 @@ function placeOrder(){
   var payEl=document.querySelector('.popt.active');
   var payText=payEl?payEl.querySelector('div div').textContent:'GCash';
   var sub=cartSub(),total=sub+S.ship-S.disc;
-  var orderNum=genNum();
-  var cartSnapshot=S.cart.slice();
-
   S.order={
-    id:orderNum,
+    id:genNum(),
     date:new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}),
     pay:payText,total:total,addr:addr.value.trim(),
-    items:cartSnapshot,step:1
+    items:S.cart.slice(),step:1
   };
   S.cart=[];
   badges();
-
-  // Save to Supabase in background
-  if(supabaseClient){
-    var btn=el('order-btn');
-    if(btn){btn.textContent='Saving...';btn.disabled=true;}
-    supabaseClient.from('orders').insert({
-      order_number: orderNum,
-      customer_name: (el('co-name').value||'Guest').trim(),
-      address: addr.value.trim(),
-      contact_number: (el('co-phone').value||'').trim(),
-      payment_method: payText,
-      subtotal: sub,
-      shipping_fee: S.ship,
-      discount: S.disc,
-      total_amount: total,
-      status: 'Order Placed'
-    }).select().single().then(function(res){
-      if(btn){btn.textContent='Place Order';btn.disabled=false;}
-      if(res.error){console.error('Order save error:',res.error.message);return;}
-      var orderId=res.data.id;
-      // Save order items
-      var itemRows=cartSnapshot.map(function(i){return{
-        order_id:orderId,
-        product_id:i.id,
-        product_name:i.title,
-        product_price:i.price,
-        quantity:i.qty,
-        selected_variation:i.variation,
-        item_total:i.price*i.qty
-      };});
-      supabaseClient.from('order_items').insert(itemRows).then(function(r){
-        if(r.error)console.error('Items save error:',r.error.message);
-      });
-      // Save initial tracking log
-      supabaseClient.from('order_tracking_logs').insert({
-        order_id:orderId,
-        status:'Order Placed',
-        note:'Your order has been received and is being processed.'
-      }).then(function(r){
-        if(r.error)console.error('Tracking log error:',r.error.message);
-      });
-    });
-  }
-
   switchPanel('confirmation');
 }
 </script>
