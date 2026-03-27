@@ -1,0 +1,11 @@
+# Netlify deployment configuration for ShopGo
+# No build step needed — this is a static site.
+
+[build]
+  publish = "."
+
+# Redirect all routes to index.html (SPA fallback)
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
