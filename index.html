@@ -870,14 +870,61 @@ function placeOrder(){
   var payEl=document.querySelector('.popt.active');
   var payText=payEl?payEl.querySelector('div div').textContent:'GCash';
   var sub=cartSub(),total=sub+S.ship-S.disc;
+  var orderNum=genNum();
+  var cartSnapshot=S.cart.slice();
+
   S.order={
-    id:genNum(),
+    id:orderNum,
     date:new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}),
     pay:payText,total:total,addr:addr.value.trim(),
-    items:S.cart.slice(),step:1
+    items:cartSnapshot,step:1
   };
   S.cart=[];
   badges();
+
+  // Save to Supabase in background
+  if(supabaseClient){
+    var btn=el('order-btn');
+    if(btn){btn.textContent='Saving...';btn.disabled=true;}
+    supabaseClient.from('orders').insert({
+      order_number: orderNum,
+      customer_name: (el('co-name').value||'Guest').trim(),
+      address: addr.value.trim(),
+      contact_number: (el('co-phone').value||'').trim(),
+      payment_method: payText,
+      subtotal: sub,
+      shipping_fee: S.ship,
+      discount: S.disc,
+      total_amount: total,
+      status: 'Order Placed'
+    }).select().single().then(function(res){
+      if(btn){btn.textContent='Place Order';btn.disabled=false;}
+      if(res.error){console.error('Order save error:',res.error.message);return;}
+      var orderId=res.data.id;
+      // Save order items
+      var itemRows=cartSnapshot.map(function(i){return{
+        order_id:orderId,
+        product_id:i.id,
+        product_name:i.title,
+        product_price:i.price,
+        quantity:i.qty,
+        selected_variation:i.variation,
+        item_total:i.price*i.qty
+      };});
+      supabaseClient.from('order_items').insert(itemRows).then(function(r){
+        if(r.error)console.error('Items save error:',r.error.message);
+      });
+      // Save initial tracking log
+      supabaseClient.from('order_tracking_logs').insert({
+        order_id:orderId,
+        status:'Order Placed',
+        note:'Your order has been received and is being processed.'
+      }).then(function(r){
+        if(r.error)console.error('Tracking log error:',r.error.message);
+      });
+    });
+  }
+
   switchPanel('confirmation');
 }
 </script>
