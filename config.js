@@ -1,10 +1,11 @@
 // ============================================================
 // ShopGo — Supabase Configuration
-// Edit this file to connect your Supabase project.
-// Get these values from: Supabase Dashboard > Settings > API
 // ============================================================
 
 window.SHOPGO_CONFIG = {
-  supabaseUrl:  'https://boupuyrkpfrqonbzhvsh.supabase.co',
-  supabaseKey:  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvdXB1eXJrcGZycW9uYnpodnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjQ4MjEsImV4cCI6MjA5MDIwMDgyMX0.cOGiqJ5oKMhFc0i-b0dfx09Wv7ymooEyWONenR-47i8',
+  supabaseUrl: 'https://boupuyrkpfrqonbzhvsh.supabase.co',
+  supabaseKey: 'sb_publishable_DxQTRX5FKBVJ1GKABG79kg_HajxGg0-',
 };
+
+// Optional: Log to confirm it loaded
+console.log('Supabase config loaded:', window.SHOPGO_CONFIG);
