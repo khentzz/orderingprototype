@@ -335,10 +335,10 @@ body{height:100%;background:#1a1a1a;display:flex;justify-content:center;align-it
     <div class="profile-badge">Free Member</div>
   </div>
   <div class="orders-row">
-    <div class="order-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>To Pay</span></div>
-    <div class="order-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>To Ship</span></div>
-    <div class="order-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span>To Receive</span></div>
-    <div class="order-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>To Review</span></div>
+    <div class="order-item" onclick="viewOrdersByStatus('Order Placed')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>To Pay</span></div>
+    <div class="order-item" onclick="viewOrdersByStatus('Packed')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>To Ship</span></div>
+    <div class="order-item" onclick="viewOrdersByStatus('Out for Delivery')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span>To Receive</span></div>
+    <div class="order-item" onclick="viewOrdersByStatus('Delivered')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>To Review</span></div>
   </div>
   <div class="menu-item" onclick="toast('Wishlist coming soon','ok')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="menu-item-label">Wishlist</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
   <div class="menu-item" onclick="toast('Vouchers coming soon','ok')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg><span class="menu-item-label">Vouchers</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -599,7 +599,7 @@ var PRODS = [
    desc:'Flexible mini tripod with universal phone mount, Bluetooth remote shutter, and 360° rotation.'}
 ];
 var TRACK_STEPS = ['Order Placed','Payment Confirmed','Preparing Order','Packed','Out for Delivery','Delivered'];
-var S = {prods:PRODS,filtered:PRODS.slice(),cat:'All',cart:[],cur:null,variation:'',qty:1,order:null,ship:120,disc:0};
+var S = {prods:PRODS,filtered:PRODS.slice(),cat:'All',cart:[],cur:null,variation:'',qty:1,order:null,ship:120,disc:0,currentUser:null};
 </script>
 
 <script>
@@ -656,7 +656,48 @@ function installApp(){
   }
 }
 
+function viewOrdersByStatus(status){
+  if(!S.order){
+    // Try to load from Supabase if user is logged in
+    if(supabaseClient&&S.currentUser){
+      supabaseClient.from('orders')
+        .select('*')
+        .eq('user_id',S.currentUser.id)
+        .eq('status',status)
+        .order('created_at',{ascending:false})
+        .limit(1)
+        .then(function(res){
+          if(res.error||!res.data||res.data.length===0){
+            toast('No orders with status: '+status,'err');return;
+          }
+          var o=res.data[0];
+          S.order={
+            id:o.order_number,
+            date:new Date(o.created_at).toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}),
+            pay:o.payment_method,total:o.total_amount,addr:o.address,
+            items:[],step:TRACK_STEPS.indexOf(o.status),
+            dbId:o.id,status:o.status
+          };
+          // Load items
+          supabaseClient.from('order_items').select('*').eq('order_id',o.id).then(function(r){
+            if(!r.error&&r.data) S.order.items=r.data.map(function(i){return{title:i.product_name,price:i.product_price,img:'',variation:i.selected_variation,qty:i.quantity};});
+            switchPanel('tracking');
+          });
+        });
+    } else {
+      toast('No recent order found','err');
+    }
+    return;
+  }
+  switchPanel('tracking');
+}
+
 function signOut(){
+  S.currentUser=null;
+  S.cart=[];
+  S.order=null;
+  badges();
+  if(supabaseClient) supabaseClient.auth.signOut();
   el('top-nav').style.display='none';
   el('main-content').style.display='none';
   el('bot-nav').style.display='none';
@@ -908,7 +949,7 @@ function placeOrder(){
   if(supabaseClient){
     var btn=el('order-btn');
     if(btn){btn.textContent='Saving...';btn.disabled=true;}
-    supabaseClient.from('orders').insert({
+    var orderPayload={
       order_number: orderNum,
       customer_name: (el('co-name').value||'Guest').trim(),
       address: addr.value.trim(),
@@ -919,9 +960,17 @@ function placeOrder(){
       discount: S.disc,
       total_amount: total,
       status: 'Order Placed'
-    }).select().single().then(function(res){
+    };
+    // Attach user_id if logged in
+    if(S.currentUser) orderPayload.user_id=S.currentUser.id;
+
+    supabaseClient.from('orders').insert(orderPayload).select().single().then(function(res){
       if(btn){btn.textContent='Place Order';btn.disabled=false;}
-      if(res.error){console.error('Order save error:',res.error.message);return;}
+      if(res.error){
+        console.error('Order save error:',res.error.message);
+        toast('Order saved locally. DB error: '+res.error.message,'err');
+        return;
+      }
       var orderId=res.data.id;
       // Save order items
       var itemRows=cartSnapshot.map(function(i){return{
@@ -943,8 +992,11 @@ function placeOrder(){
         note:'Your order has been received and is being processed.'
       }).then(function(r){
         if(r.error)console.error('Tracking log error:',r.error.message);
+        else toast('Order saved to database!','ok');
       });
     });
+  } else {
+    toast('Order placed! (Connect Supabase to save to database)','ok');
   }
 
   switchPanel('confirmation');
@@ -1045,13 +1097,49 @@ function initSupabase(){
     var cfg=window.SHOPGO_CONFIG||{};
     if(cfg.supabaseUrl&&cfg.supabaseKey&&cfg.supabaseUrl.indexOf('your-')===-1&&cfg.supabaseKey.length>20){
       supabaseClient=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseKey);
+      // Listen for auth state changes
+      supabaseClient.auth.onAuthStateChange(function(event,session){
+        S.currentUser=session?session.user:null;
+        if(S.currentUser){
+          updateProfileUI(S.currentUser);
+        }
+      });
+      // Check existing session
+      supabaseClient.auth.getSession().then(function(res){
+        if(res.data&&res.data.session){
+          S.currentUser=res.data.session.user;
+          updateProfileUI(S.currentUser);
+        }
+      });
     }
   }catch(e){console.warn('Supabase init skipped:',e);}
+}
+
+function updateProfileUI(user){
+  if(!user)return;
+  var name=user.user_metadata&&user.user_metadata.full_name?user.user_metadata.full_name:user.email;
+  var avatar=name?name.charAt(0).toUpperCase():'U';
+  var pname=el('profile-name');var pemail=el('profile-email');var pavatar=el('profile-avatar');
+  if(pname)pname.textContent=name||user.email;
+  if(pemail)pemail.textContent=user.email;
+  if(pavatar)pavatar.textContent=avatar;
 }
 
 var _socialProvider='';
 function showSocialLogin(provider){
   _socialProvider=provider;
+  // If Supabase is connected, use real OAuth
+  if(supabaseClient){
+    var providerKey=provider.toLowerCase()==='google'?'google':'facebook';
+    supabaseClient.auth.signInWithOAuth({
+      provider:providerKey,
+      options:{redirectTo:window.location.origin}
+    }).then(function(res){
+      if(res.error){toast('Sign in failed: '+res.error.message,'err');}
+    });
+    return;
+  }
+  // Fallback: show email/password modal
   el('modal-title').textContent='Continue with '+provider;
   el('modal-btn').textContent='Sign in with '+provider;
   el('modal-email').value='';
@@ -1067,11 +1155,30 @@ function submitSocialLogin(){
   if(!email){el('modal-email').focus();toast('Please enter your email','err');return;}
   if(!pass){el('modal-pass').focus();toast('Please enter your password','err');return;}
   el('modal-btn').textContent='Signing in...';
-  setTimeout(function(){
-    closeSocialModal();
-    goHome();
-    toast('Welcome! Signed in with '+_socialProvider,'ok');
-  },900);
+  if(supabaseClient){
+    // Try sign in first, then sign up if user doesn't exist
+    supabaseClient.auth.signInWithPassword({email:email,password:pass}).then(function(res){
+      if(res.error){
+        // User doesn't exist — create account
+        supabaseClient.auth.signUp({email:email,password:pass}).then(function(r2){
+          if(r2.error){toast('Error: '+r2.error.message,'err');el('modal-btn').textContent='Sign in with '+_socialProvider;return;}
+          S.currentUser=r2.data.user;
+          closeSocialModal();goHome();
+          toast('Account created! Welcome to ShopGo','ok');
+        });
+      } else {
+        S.currentUser=res.data.user;
+        updateProfileUI(res.data.user);
+        closeSocialModal();goHome();
+        toast('Welcome back!','ok');
+      }
+    });
+  } else {
+    setTimeout(function(){
+      closeSocialModal();goHome();
+      toast('Welcome! Signed in as guest','ok');
+    },900);
+  }
 }
 
 document.addEventListener('DOMContentLoaded',function(){

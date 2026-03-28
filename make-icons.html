@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head><title>Generate Icons</title></head>
-<body>
-<p>Click each button to download the icon files. Save them in your project folder.</p>
-<button onclick="gen(192)">Download icon-192.png</button>
-<button onclick="gen(512)">Download icon-512.png</button>
+<head><title>Make Icons</title></head>
+<body style="font-family:sans-serif;padding:20px">
+<h3>Click both buttons, save files to your project folder</h3>
+<button onclick="gen(192)" style="padding:12px 20px;margin:8px;background:#FF6A00;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Download icon-192.png</button>
+<button onclick="gen(512)" style="padding:12px 20px;margin:8px;background:#FF6A00;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem">Download icon-512.png</button>
 <canvas id="c" style="display:none"></canvas>
 <script>
-function gen(size) {
-  var c = document.getElementById('c');
-  c.width = size; c.height = size;
-  var ctx = c.getContext('2d');
-  // Orange rounded background
-  var r = size * 0.2;
+function gen(size){
+  var c=document.getElementById('c');
+  c.width=size;c.height=size;
+  var ctx=c.getContext('2d');
+  var r=size*0.22;
   ctx.beginPath();
-  ctx.moveTo(r,0); ctx.lineTo(size-r,0);
+  ctx.moveTo(r,0);ctx.lineTo(size-r,0);
   ctx.arcTo(size,0,size,r,r);
   ctx.lineTo(size,size-r);
   ctx.arcTo(size,size,size-r,size,r);
@@ -23,18 +22,16 @@ function gen(size) {
   ctx.lineTo(0,r);
   ctx.arcTo(0,0,r,0,r);
   ctx.closePath();
-  ctx.fillStyle = '#FF6A00';
+  ctx.fillStyle='#FF6A00';
   ctx.fill();
-  // White SG text
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold ' + Math.round(size*0.36) + 'px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('SG', size/2, size/2);
-  // Download
-  var a = document.createElement('a');
-  a.download = 'icon-' + size + '.png';
-  a.href = c.toDataURL('image/png');
+  ctx.fillStyle='#ffffff';
+  ctx.font='bold '+Math.round(size*0.38)+'px Arial';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('SG',size/2,size/2);
+  var a=document.createElement('a');
+  a.download='icon-'+size+'.png';
+  a.href=c.toDataURL('image/png');
   a.click();
 }
 </script>
