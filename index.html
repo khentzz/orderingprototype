@@ -1015,19 +1015,68 @@ function renderConf(){
 }
 
 function renderTracking(){
-  if(!S.order)return;
+  if(!S.order){
+    // Try to load most recent order from Supabase
+    if(supabaseClient && S.currentUser){
+      var tl=el('tr-timeline');
+      if(tl)tl.innerHTML='<div style="text-align:center;padding:20px;color:var(--t2);font-size:.85rem">Loading your order...</div>';
+      supabaseClient.from('orders')
+        .select('*')
+        .eq('user_id', S.currentUser.id)
+        .order('created_at',{ascending:false})
+        .limit(1)
+        .then(function(res){
+          if(res.error||!res.data||res.data.length===0){
+            if(tl)tl.innerHTML='<div style="text-align:center;padding:20px;color:var(--t2);font-size:.85rem">No orders found yet.</div>';
+            return;
+          }
+          var o=res.data[0];
+          S.order={
+            id:o.order_number,
+            date:new Date(o.created_at).toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}),
+            pay:o.payment_method, total:o.total_amount, addr:o.address,
+            items:[], step:TRACK_STEPS.indexOf(o.status), status:o.status, dbId:o.id
+          };
+          if(S.order.step<0)S.order.step=0;
+          // Load items
+          supabaseClient.from('order_items').select('*').eq('order_id',o.id).then(function(r){
+            if(!r.error&&r.data){
+              S.order.items=r.data.map(function(i){
+                return{title:i.product_name,price:i.product_price,img:'',variation:i.selected_variation||'',qty:i.quantity};
+              });
+            }
+            renderTracking();
+          });
+        });
+      return;
+    } else {
+      // No Supabase or not logged in — show empty state
+      var tl2=el('tr-timeline');
+      if(tl2)tl2.innerHTML='<div style="text-align:center;padding:20px;color:var(--t2);font-size:.85rem">No order to track yet. Place an order first!</div>';
+      if(el('tr-num'))el('tr-num').textContent='—';
+      if(el('tr-badge'))el('tr-badge').textContent='No Order';
+      if(el('tr-date'))el('tr-date').textContent='—';
+      if(el('tr-pay'))el('tr-pay').textContent='—';
+      if(el('tr-total'))el('tr-total').textContent='—';
+      if(el('tr-addr'))el('tr-addr').textContent='—';
+      return;
+    }
+  }
+
   var o=S.order;
-  if(el('tr-num'))el('tr-num').textContent=o.id;
-  if(el('tr-badge'))el('tr-badge').textContent='Processing';
-  if(el('tr-date'))el('tr-date').textContent=o.date;
-  if(el('tr-pay'))el('tr-pay').textContent=o.pay;
-  if(el('tr-total'))el('tr-total').textContent=peso(o.total);
-  if(el('tr-addr'))el('tr-addr').textContent=o.addr;
+  if(el('tr-num'))el('tr-num').textContent=o.id||'—';
+  if(el('tr-badge'))el('tr-badge').textContent=o.status||'Order Placed';
+  if(el('tr-date'))el('tr-date').textContent=o.date||'—';
+  if(el('tr-pay'))el('tr-pay').textContent=o.pay||'—';
+  if(el('tr-total'))el('tr-total').textContent=o.total?peso(o.total):'—';
+  if(el('tr-addr'))el('tr-addr').textContent=o.addr||'—';
+
+  var step=typeof o.step==='number'?o.step:0;
   var tl=el('tr-timeline');
   if(tl){
     var html='';
     for(var i=0;i<TRACK_STEPS.length;i++){
-      var done=i<o.step,cur=i===o.step,cls=done?'done':(cur?'cur':'');
+      var done=i<step, cur=i===step, cls=done?'done':(cur?'cur':'');
       html+='<div class="tl-item">';
       html+='<div style="display:flex;flex-direction:column;align-items:center">';
       html+='<div class="tl-dot '+cls+'"></div>';
@@ -1037,18 +1086,22 @@ function renderTracking(){
     }
     tl.innerHTML=html;
   }
+
   var ti=el('tr-items');
-  if(ti&&o.items){
+  if(ti&&o.items&&o.items.length>0){
     var ihtml='';
     for(var j=0;j<o.items.length;j++){
       var item=o.items[j];
       ihtml+='<div style="display:flex;gap:10px;margin-bottom:10px;align-items:center">';
-      ihtml+='<img src="'+item.img+'" style="width:44px;height:44px;border-radius:8px;object-fit:cover"/>';
+      if(item.img)ihtml+='<img src="'+item.img+'" style="width:44px;height:44px;border-radius:8px;object-fit:cover"/>';
+      else ihtml+='<div style="width:44px;height:44px;border-radius:8px;background:var(--bg);flex-shrink:0"></div>';
       ihtml+='<div style="flex:1"><div style="font-size:.82rem;font-weight:600;color:var(--t)">'+item.title+'</div>';
       ihtml+='<div style="font-size:.75rem;color:var(--t2)">'+item.variation+' \u00D7 '+item.qty+'</div></div>';
       ihtml+='<div style="font-size:.85rem;font-weight:700;color:var(--p)">'+peso(item.price*item.qty)+'</div></div>';
     }
     ti.innerHTML=ihtml;
+  } else if(ti){
+    ti.innerHTML='<div style="font-size:.85rem;color:var(--t2);text-align:center;padding:10px">No items found.</div>';
   }
 }
 </script>
